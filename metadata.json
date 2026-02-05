@@ -1,0 +1,9 @@
+{
+  "name": "Personal Scent DNA™ (Pulse)",
+  "description": "L’Oréal Luxe Innovation Lab's biometric-driven fragrance recommendation engine. No quizzes, just Pulse.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone",
+    "geolocation"
+  ]
+}

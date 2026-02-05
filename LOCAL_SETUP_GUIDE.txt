@@ -1,0 +1,52 @@
+
+PULSE | FULL LOCAL ARCHITECTURE GUIDE (ZERO-CLOUD EDITION)
+=========================================================
+
+This guide explains how to run Pulse in a strictly local, high-privacy environment
+suitable for L’Oréal Luxe Innovation Lab's secure internal testing.
+
+1. LOCAL DATABASE (PostgreSQL)
+------------------------------
+The app is pre-configured with Prisma for user and archetype persistence.
+- Install PostgreSQL locally.
+- Create a database named `pulse_luxe`.
+- Update your '.env' file:
+  DATABASE_URL="postgresql://postgres:YOUR_PASSWORD@localhost:5432/pulse_luxe"
+- Initialize the schema:
+  $ npx prisma db push
+  $ npx prisma generate
+
+2. LOCAL VISION ENGINE (OpenCV / Tesseract)
+-------------------------------------------
+To process fragrance bottles without Google Vision:
+- The `services/vision.ts` is ready for 'Local Mode'.
+- Option A (Client-side): Install `tesseract.js` to perform OCR on bottle labels 
+  directly in the browser.
+- Option B (Server-side): Use an Express/Python bridge with OpenCV (cv2) to 
+  perform feature matching against the /public/fragrance-db/ assets.
+
+3. PRIVATE AI INFERENCE (Ollama / Local LLM)
+--------------------------------------------
+To replace Gemini for Scent DNA generation:
+- Install Ollama (https://ollama.ai).
+- Pull a lightweight model: $ ollama run mistral
+- The `services/gemini.ts` file contains a commented-out fetch block. 
+- Point it to: 'http://localhost:11434/api/generate'
+- Prompt: "Based on these biometrics [facial: diamond, expression: calm], 
+  which L’Oréal Luxe archetype (Solar Alchemist, Obsidian Nomad, Cyber Oud, 
+  Velvet Minimalist) fits best? Return ONLY the name."
+
+4. INSTALLATION & RUNTIME
+-------------------------
+$ npm install
+$ npm run dev
+
+The app will detect the presence of your local database and bypass all cloud 
+requirements. Biometric data (FaceMesh) is processed entirely in the browser 
+via WebAssembly, never leaving the local machine.
+
+5. ARCHITECTURE OVERVIEW
+------------------------
+[Camera] -> [MediaPipe Wasm] -> [Local DNA Logic] -> [Local Postgres]
+   |
+   +------> [OpenCV.js/Tesseract.js] -> [Brand Detection]
